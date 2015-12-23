@@ -4,7 +4,7 @@ import (
 	"os"
 	"errors"
 	"fmt"
-    "github.com/bitionaire/dochead"
+    "github.com/netobrev/dochead"
 )
 
 func main() {
@@ -15,7 +15,7 @@ func main() {
 	} else {
 		file := files[0]
 		
-        apiDefinition := dochead.ReadAPIDefinition(file)
+        apiDefinition := go.ReadAPIDefinition(file)
         fmt.Printf("Api %s\n", apiDefinition)
 	}
 }
