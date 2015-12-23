@@ -10,9 +10,11 @@ type ApiDefinition struct {
 
 type ApiResource struct {
 	Name string
+    Verb string
 	URI  string
+    Html string
 }
 
 func (resource ApiResource) String() string {
-    return fmt.Sprintf("API Resource: %s (Name: %s)", resource.URI, resource.Name)
+    return fmt.Sprintf("API Resource: %s %s (Name: %s)\n%s", resource.Verb, resource.URI, resource.Name, resource.Html)
 }

@@ -3,6 +3,7 @@ package dochead
 import (
 	"bytes"
 	//"fmt"
+    "regexp"
 	"io/ioutil"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/russross/blackfriday"
@@ -12,6 +13,17 @@ func processError(err error) {
     if err != nil {
 		panic(err)
 	}
+}
+
+func parseURI(httpURI string) (verb string, uri string) {
+    matching, err := regexp.Match("[A-Z]+\\s+.*", []byte (httpURI))
+    if !matching || err != nil {
+        return
+    }
+    
+    whitespacePattern := regexp.MustCompile("\\s+")
+    splitted := whitespacePattern.Split(httpURI, 2)
+    return splitted[0], splitted[1]
 }
 
 // ReadAPIDefinition reads an API definition from a markdown file.
@@ -36,8 +48,10 @@ func ReadAPIDefinition(file string) ApiDefinition {
 
 		definitionSelection := resource.NextUntil("h1").WrapAll("*")
 
-        uri := definitionSelection.Find("code:first-of-type").First().Text()
-        apiResource := ApiResource{resourceName, uri}
+        basicHTML, _ := definitionSelection.NextUntil("h2").WrapAll("*").Html()
+
+        verb, uri := parseURI(definitionSelection.Find("code:first-of-type").First().Text())
+        apiResource := ApiResource{resourceName, verb, uri, basicHTML}
         
         apiResources = append(apiResources, apiResource)
 	})
