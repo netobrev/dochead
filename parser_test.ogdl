@@ -1,0 +1,62 @@
+resource
+    
+    name "Get Balance"
+    verb "GET"
+    uri "/balances/{id}"
+    description \
+        Every user has a given balance of yellow and blue suns, which we've technically modelled 
+        like money: An amount and a currency (we'll use *unit* here).
+        
+    parameter
+        
+        id
+            type number
+            description "The user id to get the balance for"
+        
+    return   
+        
+        content_type "application-json"
+        schema \
+            {
+                "title" : "Balance",
+                "type"  : "array",
+                "items" : {
+                    "title"      : "Amount",
+                    "type"       : "object",
+                    "properties" : {
+                    "amount" : { "type" : "integer" },
+                    "unit"   : { "enum" : [ "blue", "yellow"] }
+                    } 
+                }
+            }  
+    status
+        
+        200 "When the account exists"
+        404 "When the account by the given ID does not exist"
+        
+    examples
+        
+        example
+            
+            name "First example"
+            request \
+                GET /balances/1549 HTTP/1.1
+                
+            response \
+                HTTP/1.1 200
+                Content-Type: application/json
+                
+                [ { "amount" : 15 , "unit" : "blue" } , { "amount" : 10 , "unit" : "yellow" } ]
+        
+        example
+            
+            name "When the user does not exist"
+            request \
+                GET /balances/0 HTTP/1.1
+                
+            response \
+                HTTP/1.1 404
+                Content-Type: application/json
+                
+                { "message" : "This account does not exist" }  
+                

@@ -5,6 +5,4 @@ This template should be used for the test.
 ## {{ .Verb }} {{ .Name }}
 `{{ .URI }}`
 
-Raw: {{ .Html }}
-
 {{ end }}

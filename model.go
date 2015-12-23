@@ -1,7 +1,7 @@
 package dochead
 
 import (
-    "fmt"
+    "net/http"
 )
 
 type ApiDefinition struct {
@@ -12,9 +12,37 @@ type ApiResource struct {
 	Name string
     Verb string
 	URI  string
-    Html string
+    Description string
+    
+    Parameters []Parameter
+    Body Body
+    Return Return
+    Status Status
+    
+    Examples []Example
 }
 
-func (resource ApiResource) String() string {
-    return fmt.Sprintf("API Resource: %s %s (Name: %s)\n%s", resource.Verb, resource.URI, resource.Name, resource.Html)
+type Parameter struct {
+    Name string
+    Type string
+    Description string
+}
+
+type Body struct {
+    Accept string
+    Schema string
+}
+
+type Return struct {
+    ContentType string
+    Schema string
+}
+
+type Status struct {
+    Codes map[int]string
+}
+type Example struct {
+    Name string
+    Request *http.Request
+    Response *http.Response
 }
