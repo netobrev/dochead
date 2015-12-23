@@ -3,4 +3,4 @@
 readonly CURRENT_DIR=$(pwd)
 readonly SCRIPT_DIR=$(cd $(dirname "$0") && pwd)
 
-cd ${SCRIPT_DIR}/cmd/dochead && go build -v && ./dochead ${SCRIPT_DIR}/parser_test.md && cd ${CURRENT_DIR}
+cd ${SCRIPT_DIR}/cmd/dochead && go build -v && ./dochead -f ${SCRIPT_DIR}/parser_test.md -t ${SCRIPT_DIR}/output_test.tpl  && cd ${CURRENT_DIR}

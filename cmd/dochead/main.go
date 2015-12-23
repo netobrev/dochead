@@ -2,21 +2,35 @@ package main
 
 import (
 	"os"
-	"errors"
 	"fmt"
+    "strings"
     "github.com/netobrev/dochead"
+    "github.com/jessevdk/go-flags"
 )
 
+type options struct {
+    InputFiles []string `short:"f" long:"file" description:"Input files" value-name:"FILE"`
+    Template string `short:"t" long:"template" description:"Output Template" value-name:"FILE"`
+}
+
 func main() {
-	files := os.Args[1:]
-	if len(files) != 1 {
-		error := errors.New("what's wrong with ya?")
-		panic(error)
-	} else {
-		file := files[0]
-		
-        apiDefinition := dochead.ReadAPIDefinition(file)
-        fmt.Printf("Api %s\n", apiDefinition)
-	}
+    o := options {}
+	args, err := flags.ParseArgs(&o, os.Args[1:])
+    if err != nil {
+        panic(err)
+    }
+    
+    fmt.Printf("Input Files: %s\nTemplate: %s\n", o.InputFiles, o.Template)
+    fmt.Printf("Remaining args: %s\n", strings.Join(args, " "))
+    
+    if o.Template != "" {
+        for _,file := range o.InputFiles {
+            fmt.Printf("Processing file: %s\n", file)
+            apiDefinition := dochead.ReadAPIDefinition(file)
+            dochead.WriteAPIDefinition(apiDefinition, o.Template)
+        }
+    } else {
+        fmt.Printf("No Template specified, nothing to print!\n")
+    }
 }
 
