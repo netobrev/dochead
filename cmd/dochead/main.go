@@ -15,7 +15,7 @@ func main() {
 	} else {
 		file := files[0]
 		
-        apiDefinition := go.ReadAPIDefinition(file)
+        apiDefinition := dochead.ReadAPIDefinition(file)
         fmt.Printf("Api %s\n", apiDefinition)
 	}
 }
