@@ -2,35 +2,27 @@ package main
 
 import (
 	"os"
-	"fmt"
-    "strings"
     "github.com/netobrev/dochead"
     "github.com/jessevdk/go-flags"
 )
 
+// command line options
 type options struct {
-    InputFiles []string `short:"f" long:"file" description:"Input files" value-name:"FILE"`
-    Template string `short:"t" long:"template" description:"Output Template" value-name:"FILE"`
+    InputFiles []string `short:"f" long:"file" description:"Input files" value-name:"<FILE>" required:"true"`
+    Template string `short:"t" long:"template" description:"Output Template" value-name:"<FILE>" required:"true"`
 }
 
 func main() {
     o := options {}
-	args, err := flags.ParseArgs(&o, os.Args[1:])
+	_, err := flags.ParseArgs(&o, os.Args[1:])
     if err != nil {
-        panic(err)
+        os.Exit(1)
     }
-    
-    fmt.Printf("Input Files: %s\nTemplate: %s\n", o.InputFiles, o.Template)
-    fmt.Printf("Remaining args: %s\n", strings.Join(args, " "))
-    
-    if o.Template != "" {
-        for _,file := range o.InputFiles {
-            fmt.Printf("Processing file: %s\n", file)
-            apiDefinition := dochead.ReadAPIDefinition(file)
-            dochead.WriteAPIDefinition(apiDefinition, o.Template)
-        }
-    } else {
-        fmt.Printf("No Template specified, nothing to print!\n")
+
+    // TODO aggregate input files to a common api definition
+    for _, file := range o.InputFiles {
+        apiDefinition := dochead.ReadAPIDefinition(file)
+        dochead.WriteAPIDefinition(apiDefinition, o.Template)
     }
 }
 
