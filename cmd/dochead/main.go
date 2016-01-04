@@ -21,7 +21,8 @@ func main() {
 
     // TODO aggregate input files to a common api definition
     for _, file := range o.InputFiles {
-        apiDefinition := dochead.ReadAPIDefinition(file)
+        apiResources, _ := dochead.ReadAPIResources(file)
+        apiDefinition := dochead.ApiDefinition{apiResources}
         dochead.WriteAPIDefinition(apiDefinition, o.Template)
     }
 }

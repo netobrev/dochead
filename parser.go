@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"net/http"
-	"regexp"
 	"strconv"
 	"strings"
 
@@ -17,21 +16,13 @@ func processError(err error) {
 	}
 }
 
-func parseURI(httpURI string) (verb string, uri string) {
-	matching, err := regexp.Match("[A-Z]+\\s+.*", []byte(httpURI))
-	if !matching || err != nil {
-		return
-	}
-
-	whitespacePattern := regexp.MustCompile("\\s+")
-	splitted := whitespacePattern.Split(httpURI, 2)
-	return splitted[0], splitted[1]
-}
-
-// ReadAPIDefinition reads an API definition from a markdown file.
-func ReadAPIDefinition(file string) ApiDefinition {
+// ReadAPIResources reads all API resources from a OGDL file.
+func ReadAPIResources(file string) ([]ApiResource, error) {
 	document := ogdl.ParseFile(file)
-
+    if document == nil {
+        return nil, fmt.Errorf("could not parse file \"%s\"", file)
+    } 
+    
     var apiResources []ApiResource
     for i := 0; i < document.Len(); i++ {
         resource := document.Get(fmt.Sprintf("resource{%d}", i))
@@ -39,12 +30,12 @@ func ReadAPIDefinition(file string) ApiDefinition {
         apiResource := parseResource(resource)
         apiResources = append(apiResources, apiResource)
     }
-    return ApiDefinition{apiResources}
+    return apiResources, nil
 }
 
 func parseResource(resource *ogdl.Graph) ApiResource {
 	name, _ := resource.GetString("name")
-	verb, _ := resource.GetString("verb")
+	method, _ := resource.GetString("method")
 	uri, _ := resource.GetString("uri")
 	description, _ := resource.GetString("description")
 
@@ -58,7 +49,7 @@ func parseResource(resource *ogdl.Graph) ApiResource {
 
 	return ApiResource{
 		name,
-		verb,
+		method,
 		uri,
 		description,
 		parameters,
@@ -131,13 +122,4 @@ func parseExamples(graph *ogdl.Graph) []Example {
 	}
 
 	return examples
-}
-
-func printChildren(graph *ogdl.Graph) {
-	fmt.Printf("\n\n")
-	fmt.Printf("The node: %s\n", graph)
-	for i := 0; i < graph.Len(); i++ {
-		fmt.Printf("Child Node: %s\n", graph.GetAt(i).String())
-	}
-	fmt.Printf("\n\n")
 }

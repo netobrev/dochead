@@ -1,16 +1,11 @@
 resource
     
     name "Get Balance"
-    verb "GET"
+    method "GET"
     uri "/balances/{id}"
     description \
         Every user has a given balance of yellow and blue suns, which we've technically modelled 
         like money: An amount and a currency (we'll use *unit* here).
-    
-    parameter
-        name id
-        type number
-        description "The user id to get the balance for"
     
     parameter
         name id

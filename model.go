@@ -10,7 +10,7 @@ type ApiDefinition struct {
 
 type ApiResource struct {
 	Name string
-    Verb string
+    Method string
 	URI  string
     Description string
     
