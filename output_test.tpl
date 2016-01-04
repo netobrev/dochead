@@ -2,7 +2,5 @@
 
 This template should be used for the test.
 {{ range .Resources }}
-## {{ .Verb }} {{ .Name }}
-`{{ .URI }}`
-
-{{ end }}
+## {{ .Method }} {{ .Name }}
+`{{ .URI }}`{{ end }}

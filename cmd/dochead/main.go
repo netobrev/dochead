@@ -23,7 +23,7 @@ func main() {
     for _, file := range o.InputFiles {
         apiResources, _ := dochead.ReadAPIResources(file)
         apiDefinition := dochead.ApiDefinition{apiResources}
-        dochead.WriteAPIDefinition(apiDefinition, o.Template)
+        dochead.WriteAPIDefinition(os.Stdout, apiDefinition, o.Template)
     }
 }
 
