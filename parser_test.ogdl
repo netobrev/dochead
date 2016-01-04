@@ -6,13 +6,17 @@ resource
     description \
         Every user has a given balance of yellow and blue suns, which we've technically modelled 
         like money: An amount and a currency (we'll use *unit* here).
-        
+    
     parameter
-        
-        id
-            type number
-            description "The user id to get the balance for"
-        
+        name id
+        type number
+        description "The user id to get the balance for"
+    
+    parameter
+        name id
+        type number
+        description "The user id to get the balance for"
+    
     return   
         
         content_type "application-json"
@@ -29,34 +33,36 @@ resource
                     } 
                 }
             }  
-    status
         
-        200 "When the account exists"
-        404 "When the account by the given ID does not exist"
+        status
+            code 200
+            description "When the account exists"
         
-    examples
+        status
+            code 404 
+            description "When the account by the given ID does not exist"
         
-        example
+    example
+        
+        name "First example"
+        request \
+            GET /balances/1549 HTTP/1.1
             
-            name "First example"
-            request \
-                GET /balances/1549 HTTP/1.1
-                
-            response \
-                HTTP/1.1 200
-                Content-Type: application/json
-                
-                [ { "amount" : 15 , "unit" : "blue" } , { "amount" : 10 , "unit" : "yellow" } ]
-        
-        example
+        response \
+            HTTP/1.1 200
+            Content-Type: application/json
             
-            name "When the user does not exist"
-            request \
-                GET /balances/0 HTTP/1.1
-                
-            response \
-                HTTP/1.1 404
-                Content-Type: application/json
-                
-                { "message" : "This account does not exist" }  
-                
+            [ { "amount" : 15 , "unit" : "blue" } , { "amount" : 10 , "unit" : "yellow" } ]
+    
+    example
+        
+        name "When the user does not exist"
+        request \
+            GET /balances/0 HTTP/1.1
+            
+        response \
+            HTTP/1.1 404
+            Content-Type: application/json
+            
+            { "message" : "This account does not exist" }  
+            

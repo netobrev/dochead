@@ -32,15 +32,14 @@ func parseURI(httpURI string) (verb string, uri string) {
 func ReadAPIDefinition(file string) ApiDefinition {
 	document := ogdl.ParseFile(file)
 
-	var apiResources []ApiResource
-	for i := 0; i < document.Len(); i++ {
-		resource := document.Get(fmt.Sprintf("resource{%d}", i))
+    var apiResources []ApiResource
+    for i := 0; i < document.Len(); i++ {
+        resource := document.Get(fmt.Sprintf("resource{%d}", i))
 
-		apiResource := parseResource(resource)
-		apiResources = append(apiResources, apiResource)
-	}
-
-	return ApiDefinition{apiResources}
+        apiResource := parseResource(resource)
+        apiResources = append(apiResources, apiResource)
+    }
+    return ApiDefinition{apiResources}
 }
 
 func parseResource(resource *ogdl.Graph) ApiResource {
@@ -49,31 +48,33 @@ func parseResource(resource *ogdl.Graph) ApiResource {
 	uri, _ := resource.GetString("uri")
 	description, _ := resource.GetString("description")
 
-	parameter := parseParameter(resource.Node("parameter"))
+    allParameters, _ := resource.GetSimilar("parameter")
+	parameters := parseParameter(allParameters)
 	body := parseBody(resource.Node("body"))
 	ret := parseReturn(resource.Node("return"))
-	status := parseStatus(resource.Node("status"))
-	examples := parseExamples(resource.Get("examples"))
+    
+    allExamples, _ := resource.GetSimilar("example")
+	examples := parseExamples(allExamples)
 
 	return ApiResource{
 		name,
 		verb,
 		uri,
 		description,
-		parameter,
+		parameters,
 		body,
 		ret,
-		status,
 		examples,
 	}
 }
 
 func parseParameter(graph *ogdl.Graph) []Parameter {
 	var parameters []Parameter
+
 	for i := 0; i < graph.Len(); i++ {
 		parameter := graph.GetAt(i)
 
-		id := parameter.String()
+		id, _ := parameter.GetString("name")
 		valueType, _ := parameter.GetString("type")
 		description, _ := parameter.GetString("description")
 
@@ -91,17 +92,21 @@ func parseBody(graph *ogdl.Graph) Body {
 func parseReturn(graph *ogdl.Graph) Return {
 	contentType, _ := graph.GetString("content_type")
 	schema, _ := graph.GetString("schema")
-	return Return{contentType, schema}
+    
+    allStatusCodes, _ := graph.GetSimilar("status")
+	return Return{contentType, schema, parseStatus(allStatusCodes)}
 }
 
-func parseStatus(graph *ogdl.Graph) Status {
+func parseStatus(graph *ogdl.Graph) map[int]string {
 	codes := make(map[int]string)
 	for i := 0; i < graph.Len(); i++ {
 		codeGraph := graph.GetAt(i)
-		code, _ := strconv.Atoi(codeGraph.String())
-		codes[code] = codeGraph.GetAt(0).Text()
+		code, _ := codeGraph.GetString("code")
+        codeInt, _ := strconv.Atoi(code)
+        description, _ := codeGraph.GetString("description")
+		codes[codeInt] = description
 	}
-	return Status{codes}
+	return codes
 }
 
 func parseExamples(graph *ogdl.Graph) []Example {

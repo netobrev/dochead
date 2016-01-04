@@ -17,8 +17,7 @@ type ApiResource struct {
     Parameters []Parameter
     Body Body
     Return Return
-    Status Status
-    
+
     Examples []Example
 }
 
@@ -36,11 +35,9 @@ type Body struct {
 type Return struct {
     ContentType string
     Schema string
-}
-
-type Status struct {
     Codes map[int]string
 }
+
 type Example struct {
     Name string
     Request *http.Request
